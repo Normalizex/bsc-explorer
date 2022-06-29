@@ -1,0 +1,42 @@
+.header__tokens {
+    position: absolute;
+    max-width: 500px;
+    top: 0;
+    margin-top: 100px;
+    width: 60%;
+    z-index: 99;
+}
+
+.header__tokens-container {
+    position: relative;
+    overflow: hidden;
+    border-color: var(--main-color);
+
+    .card {
+        border: 2px solid;
+        border-color: var(--second-color);
+        margin-bottom: 8px;
+        cursor: pointer;
+    }
+
+    .header__tokens-symbol {
+        margin-left: 8px;
+    }
+
+    .header__tokens-name {
+        margin-left: 16px;
+        color: gray;
+    }
+
+    .header__tokens-img {
+        width: 32px;
+        height: 32px;
+        vertical-align: middle;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .header__tokens-container .header__tokens-name {
+        display: none;
+    }
+}

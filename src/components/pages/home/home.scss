@@ -1,0 +1,27 @@
+.chart {
+    min-height: 500px;
+}
+
+@media only screen and (max-width: 1256px) {
+    .row{
+        .col-6{
+            width: 100%;
+            font-size: 12px;
+        }
+    }
+    .chart {
+        min-height: 600px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+
+    body {
+        font-size: 1.5rem;
+    }
+    .info {
+        .col-6 {
+            width: 100%;
+        }
+    }
+}
