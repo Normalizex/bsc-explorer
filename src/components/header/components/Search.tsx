@@ -12,7 +12,6 @@ import './search.scss';
 const Search: React.FC = () => {
     const navigate = useNavigate();
 
-    const searchRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
     const [searchData, setSearchData] = useState<{
@@ -74,7 +73,7 @@ const Search: React.FC = () => {
         document.addEventListener('mousedown', (e) => {
             assertIsNode(e.target);
 
-            if (searchRef.current && !searchRef.current.contains(e.target)) {
+            if (!document.querySelector('.header')?.contains(e.target)) {
                 setSearchData(prevSearch => {
                     return { ...prevSearch, tokens: [] };
                 });
@@ -84,7 +83,7 @@ const Search: React.FC = () => {
     }, []);
 
     return (
-        <div ref={searchRef}>
+        <>
             <div className="header__search">
                 <input 
                     type="text"
@@ -133,7 +132,7 @@ const Search: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 };
 
