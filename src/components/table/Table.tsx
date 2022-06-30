@@ -1,10 +1,10 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./table.scss";
 
 interface TableProps {
-    thead: React.FC
-    tbody: ReactElement | ReactElement[]
+    thead?: React.FC
+    tbody: React.FC | React.FC[]
     limit?: number,
     pagesLimit?: number
 }
@@ -15,7 +15,7 @@ const Table: React.FC<TableProps> = ({
     limit = 100,
     pagesLimit=NaN
 }) => {
-    const Tbodys: ReactElement[] = Array.isArray(Tbody) ? Tbody : [Tbody];
+    const Tbodys: React.FC[] = Array.isArray(Tbody) ? Tbody : [Tbody];
     const initialData = limit ? Tbodys.slice(0, Number(limit) || 100) : Tbodys;
     const [TableBody, setTableBody] = useState(initialData);
     const [currentPage, setCurrentPage] = useState(0);
@@ -33,24 +33,30 @@ const Table: React.FC<TableProps> = ({
     };
 
     useEffect(() => {
-        const Tbodys: ReactElement[] = Array.isArray(Tbody) ? Tbody : [Tbody];
+        const Tbodys: React.FC[] = Array.isArray(Tbody) ? Tbody : [Tbody];
 
         const start = limit * currentPage;
         const end = start + limit;
         const initialData = limit ? Tbodys.slice(start, end) : Tbodys;
         setTableBody(initialData);
+
+        console.log([Tbodys, limit])
     }, [Tbody, limit, currentPage])
 
     return (
         <div>
             <div className="table-wrapper">
                 <table>
-                <thead>
-                    <Thead />
-                </thead>
-                <tbody>
-                    {TableBody}
-                </tbody>
+                    {Thead && 
+                        <thead>
+                            <Thead />
+                        </thead>
+                    }
+                    <tbody>
+                        {TableBody.map((Tbody, index) => {
+                            return (<Tbody key={index} />)
+                        })}
+                    </tbody>
                 </table>
             </div>
             { pages > 1 &&

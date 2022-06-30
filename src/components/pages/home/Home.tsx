@@ -204,16 +204,18 @@ const Home: React.FC = () => {
                                         </tr>
                                     )
                                 }}
-                                tbody={latestBlocks.map((block, index) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td><Link to={`/block/${block.number}`}>#{block.number}</Link></td>
-                                            <td>{block.txs}</td>
-                                            <td>{block.timeAt}</td>
-                                            <td>{block.bnbPrice}</td>
-                                        </tr>
-                                    )
-                                })}
+                                tbody={() => {
+                                    return (<>{latestBlocks.map((block, index) => {
+                                        return (
+                                            <tr key={index}>
+                                                <td><Link to={`/block/${block.number}`}>#{block.number}</Link></td>
+                                                <td>{block.txs}</td>
+                                                <td>{block.timeAt}</td>
+                                                <td>{block.bnbPrice}</td>
+                                            </tr>
+                                        )
+                                    })}</>)
+                                }}
                                 limit={10}
                                 pagesLimit={5}
                             />
@@ -221,11 +223,9 @@ const Home: React.FC = () => {
                     </div>
                 </div>
                 <div className="col-6">
-                <div className="card">
+                    <div className="card">
                         <div className="card__header">
-                            <h3
-                                data-tooltip='test'
-                            >
+                            <h3>
                                 Latest Transactions:
                             </h3>
                         </div>
@@ -241,15 +241,17 @@ const Home: React.FC = () => {
                                         </tr>
                                     )
                                 }}
-                                tbody={latestTransactions.map((tx) => {
-                                    return (
-                                        <tr key={tx.hash}>
-                                            <td><Link to={`/tx/${tx.hash}`}>{tx.hash.slice(0, 10) + "..."}</Link></td>
-                                            <td><Link to={`/address/${tx.from}`}>{tx.from.slice(0, 20) + "..."}</Link></td>
-                                            <td><Link to={`/tx/${tx.to}`}>{tx.to ? tx.to.slice(0, 20) + "..." : "-"}</Link></td>
-                                            <td>{Web3.utils.fromWei(tx.value, 'ether')}</td>
-                                        </tr>
-                                    )
+                                tbody={latestTransactions.map(tx => {
+                                    return () => {
+                                        return (
+                                            <tr key={tx.hash}>
+                                                <td><Link to={`/tx/${tx.hash}`}>{tx.hash.slice(0, 10) + "..."}</Link></td>
+                                                <td><Link to={`/address/${tx.from}`}>{tx.from.slice(0, 20) + "..."}</Link></td>
+                                                <td><Link to={`/tx/${tx.to}`}>{tx.to ? tx.to.slice(0, 20) + "..." : "-"}</Link></td>
+                                                <td>{Web3.utils.fromWei(tx.value, 'ether')}</td>
+                                            </tr>
+                                        )
+                                    }
                                 })}
                                 limit={10}
                                 pagesLimit={10}

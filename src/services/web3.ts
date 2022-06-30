@@ -5,10 +5,11 @@ const web3 = new Web3(RPC_ENDPOINT);
 
 export const getLatestBlock = async () => web3.eth.getBlock('latest', true);
 
+export const getBlock = async (blockNumber: string | number) => web3.eth.getBlock(blockNumber, true);
+
 //Web3.js use "declare types".
 //This is my decision on how to get the type.
 export type BlockTransactionsObject = Awaited<ReturnType<typeof getLatestBlock>>;
-
 
 export const calculateGas = (block: BlockTransactionsObject) => {
     const minGasPrice = 5;//can't be less than 5.

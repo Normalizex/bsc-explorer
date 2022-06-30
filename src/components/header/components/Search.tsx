@@ -38,22 +38,24 @@ const Search: React.FC = () => {
     }
 
     const search = async () => {
-        if (!searchData.value) return;
+        if (!searchInputRef.current?.value) return;
 
-        const isBlock = !searchData.value.startsWith('0x') && Number(searchData.value);
-        const isTransaction = isTransactionHash(searchData.value);
-        const isAddress = Web3.utils.isAddress(searchData.value);
+        const searchValue = searchInputRef.current.value;
+
+        const isBlock = (!searchValue.startsWith('0x') && Number(searchValue) && Number(searchValue) > 0);
+        const isTransaction = isTransactionHash(searchValue);
+        const isAddress = Web3.utils.isAddress(searchValue);
 
         if (isTransaction){
-            navigate(`/tx/${searchData.value}`);
+            navigate(`/tx/${searchValue}`);
         }
         else if (isBlock){
-            navigate(`/blocks/${searchData.value}`);
+            navigate(`/block/${searchValue}`);
         }
         else if (isAddress){
-            navigate(`/address/${searchData.value}`);
+            navigate(`/address/${searchValue}`);
         }else {
-            searchTokens(searchData.value);
+            searchTokens(searchValue);
         }
     };
 
