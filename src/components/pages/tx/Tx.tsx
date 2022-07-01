@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Loading } from 'notiflix';
 
 import { getTransaction, getTransactionReceipt, Transaction, TransactionReceipt } from '../../../services/web3';
-import { signatures } from '../../../services/samczsun';
+import { signatures as findSignature } from '../../../services/samczsun';
 
 import './tx.scss';
 
@@ -17,6 +17,10 @@ const Tx: React.FC = () => {
         data: Transaction,
         receipt: TransactionReceipt
     } | null>(null);
+    const [signatures, setSignatures] = useState<Array<{
+        event: string,
+        name: string
+    }>>([]);
 
     useEffect(() => {
         const fetchTransaction = async () => {
@@ -28,7 +32,7 @@ const Tx: React.FC = () => {
                 if (!data || !receipt) return;
 
                 const inputFunction = data.input.slice(0, 10);
-                signatures({
+                findSignature({
                     all: true,
                     function: inputFunction
                 }).then(signaturesList => {
@@ -37,7 +41,7 @@ const Tx: React.FC = () => {
 
                     const finded = findedInputFunction[0]?.name;
                     setInputFunction(finded);
-                })
+                });
 
                 setTransaction({
                     data,
@@ -48,7 +52,38 @@ const Tx: React.FC = () => {
             setLoading(false);
         };
         fetchTransaction();
-    }, [hash])
+    }, [hash]);
+
+    useEffect(() => {
+        const fetchSignatures = async () => {
+            if (!transaction?.receipt) return;
+
+            let fetchedSignatured:Array<{
+                event: string,
+                name: string
+            }> = [];
+            for (const log of transaction.receipt.logs){
+                const event = log.topics[0];
+                const exists = fetchedSignatured.find(sig => sig.event === event);
+
+                if (exists) continue;
+
+                await findSignature({ all: true, event }).then(signature => {
+                    const findedEvent = signature.result.event[event];
+                    if (!findedEvent) return;
+
+                    const findedName = findedEvent[0].name;
+                    fetchedSignatured.push({ 
+                        event,
+                        name: findedName
+                    });
+                })
+            }
+            setSignatures(fetchedSignatured);
+        };
+
+        fetchSignatures();
+    }, [transaction?.receipt])
 
     useEffect(() => {
         if (loading) return Loading.circle('Loading...');
@@ -91,7 +126,7 @@ const Tx: React.FC = () => {
             <div className="col-12">
                 <div className="card">
                     <div className="card__header">
-                        <h3>Transactions:</h3>
+                        <h3>Transaction:</h3>
                     </div>
                     <div className="card__body">
                         <div className='tx-info'>
@@ -106,13 +141,48 @@ const Tx: React.FC = () => {
                             <p><span className='theme-color'>Gas Limit: </span>{transaction.data.gas}</p>
                             <p><span className='theme-color'>Gas Used: </span>{transaction.receipt.gasUsed}</p>
                             <p><span className='theme-color'>Nonce: </span>{transaction.data.nonce}</p>
-                            <p><span className='theme-color'>Input: </span>{inputFunction}</p>
-                            <div className="card card__border">
-                                <div className="card__body">
-                                    <p>{transaction.data.input}</p>
-                                </div>
+                            <p><span className='theme-color'>Input: </span>{transaction.data.input === '0x' ? 'Transfer' : inputFunction}</p>
+                            <div className="tx-info-card">
+                                <p>{transaction.data.input}</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div className="col-12">
+                <div className="card">
+                    <div className="card__header">
+                        <h3>Logs: {transaction.receipt.logs.length}</h3>
+                    </div>
+                    <div className="card__body">
+                        {transaction.receipt.logs.map((log, index) => {
+                            const signature = signatures.find(sig => sig.event === log.topics[0]);
+                            return (
+                                <div 
+                                    className="card card__border"
+                                    key={index}
+                                >
+                                    <div className="card__body">
+                                        <div className='tx-info'>
+                                            <p>Address: <Link to={`/address/${log.address}`}>{log.address}</Link></p>
+                                            <p>Log Index: {log.logIndex}</p>
+                                            <p>Topics: {signature?.name}</p>
+                                            {log.topics.map((topic, topicIndex) => {
+                                                return (
+                                                    <div className="tx-info-card" key={topicIndex}>
+                                                        [{topicIndex}] {topic}
+                                                    </div>
+                                                )
+                                            })}
+                                            <p>Data: </p>
+                                            <div className="tx-info-card">
+                                                {log.data}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
             </div>

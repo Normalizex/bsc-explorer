@@ -1,4 +1,4 @@
-.tx-info > p {
+.tx-info > p, tx-events > p {
     padding: 15px 10px;
     font-weight: 800;
     font-size: 18px;
@@ -8,5 +8,22 @@
     }
     a{
         color: var(--second-color)
+    }
+}
+
+.tx-info-card {
+    word-wrap: break-word;
+    padding: 30px;
+    margin-bottom: 8px;
+    background-color: var(--main-bg);
+    box-shadow: var(--box-shadow);
+    border: 2px solid;
+    border-radius: var(--border-radius);
+    border-color: var(--second-color);
+}
+
+@media only screen and (max-width: 600px) {
+    .topic-card, .tx-info {
+        font-size: 12px;
     }
 }

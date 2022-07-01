@@ -204,18 +204,20 @@ const Home: React.FC = () => {
                                         </tr>
                                     )
                                 }}
-                                tbody={() => {
-                                    return (<>{latestBlocks.map((block, index) => {
-                                        return (
-                                            <tr key={index}>
-                                                <td><Link to={`/block/${block.number}`}>#{block.number}</Link></td>
-                                                <td>{block.txs}</td>
-                                                <td>{block.timeAt}</td>
-                                                <td>{block.bnbPrice}</td>
-                                            </tr>
-                                        )
-                                    })}</>)
-                                }}
+                                tbody={
+                                    latestBlocks.map((block) => {
+                                        return () => {
+                                            return (
+                                                <tr key={block.number}>
+                                                    <td><Link to={`/block/${block.number}`}>#{block.number}</Link></td>
+                                                    <td>{block.txs}</td>
+                                                    <td>{block.timeAt}</td>
+                                                    <td>{block.bnbPrice}</td>
+                                                </tr>
+                                            )
+                                        }
+                                    })
+                                }
                                 limit={10}
                                 pagesLimit={5}
                             />
