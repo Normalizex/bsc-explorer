@@ -4,6 +4,7 @@
     align-items: center;
     justify-content: space-between;
     height: var(--header-height);
+
 }
 
 .header__search {
@@ -60,6 +61,10 @@
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
+
+    &:hover{
+        color: var(--second-color-orange);
+    }
 }
 
 .header__logo > img {

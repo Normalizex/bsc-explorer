@@ -97,32 +97,26 @@ const Block: React.FC = () => {
                         <h3>Transactions:</h3>
                     </div>
                     <div className="card__body">
-                        <Table
-                            tbody={() => {
-                                return (
-                                    <div className='block-info'>
-                                        <p>Number: {block.number}</p>
-                                        <p>Tx Count: {block.transactions.length}</p>
-                                        <p>Timestam: {block.timestamp}</p>
-                                        <p>Miner: <Link to={`/address/${block.miner}`}>{block.miner}</Link></p>
-                                        <p>Difficulty: {block.difficulty}</p>
-                                        <p>Total Difficulty: {block.totalDifficulty}</p>
-                                        <p>Size: {block.size}</p>
-                                        <p>Gas Used: {block.gasUsed}</p>
-                                        <p>Gas Limit: {block.gasLimit}</p>
-                                        <p>Hash: {block.hash}</p>
-                                        <p>Parent Hash: {block.parentHash}</p>
-                                        <p>Sha3Uncles: {block.sha3Uncles}</p>
-                                        <p>Nonce: {block.nonce}</p>
-                                    </div>
-                                )
-                            }}
-                        />
+                        <div className='block-info'>
+                            <p><span className='theme-color'>Number: </span>{block.number}</p>
+                            <p><span className='theme-color'>Tx Count: </span>{block.transactions.length}</p>
+                            <p><span className='theme-color'>Timestam: </span>{block.timestamp}</p>
+                            <p><span className='theme-color'>Miner: </span><Link to={`/address/${block.miner}`}>{block.miner}</Link></p>
+                            <p><span className='theme-color'>Difficulty: </span>{block.difficulty}</p>
+                            <p><span className='theme-color'>Total Difficulty: </span>{block.totalDifficulty}</p>
+                            <p><span className='theme-color'>Size: </span>{block.size}</p>
+                            <p><span className='theme-color'>Gas Used: </span>{block.gasUsed}</p>
+                            <p><span className='theme-color'>Gas Limit: </span>{block.gasLimit}</p>
+                            <p><span className='theme-color'>Hash: </span>{block.hash}</p>
+                            <p><span className='theme-color'>Parent Hash: </span>{block.parentHash}</p>
+                            <p><span className='theme-color'>Sha3Uncles: </span>{block.sha3Uncles}</p>
+                            <p><span className='theme-color'>Nonce: </span>{block.nonce}</p>
+                        </div>
                     </div>
                 </div>
             </div>
             <div className="col-12">
-                <div className="card">
+                <div className="card txs-info">
                     <div className="card__body">
                         <Table
                             thead={() => {
@@ -141,7 +135,7 @@ const Block: React.FC = () => {
                                         <tr key={tx.hash}>
                                             <td><Link to={`/tx/${tx.hash}`}>{tx.hash.slice(0, 10) + "..."}</Link></td>
                                             <td><Link to={`/address/${tx.from}`}>{tx.from.slice(0, 20) + "..."}</Link></td>
-                                            <td><Link to={`/tx/${tx.to}`}>{tx.to ? tx.to.slice(0, 20) + "..." : "-"}</Link></td>
+                                            <td><Link to={`/address/${tx.to}`}>{tx.to ? tx.to.slice(0, 20) + "..." : "-"}</Link></td>
                                             <td>{Web3.utils.fromWei(tx.value, 'ether')}</td>
                                         </tr>
                                     )

@@ -1,0 +1,12 @@
+.tx-info > p {
+    padding: 15px 10px;
+    font-weight: 800;
+    font-size: 18px;
+    word-wrap: break-word;
+    a:hover{
+        color: var(--main-color);
+    }
+    a{
+        color: var(--second-color)
+    }
+}

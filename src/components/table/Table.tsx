@@ -40,7 +40,6 @@ const Table: React.FC<TableProps> = ({
         const initialData = limit ? Tbodys.slice(start, end) : Tbodys;
         setTableBody(initialData);
 
-        console.log([Tbodys, limit])
     }, [Tbody, limit, currentPage])
 
     return (

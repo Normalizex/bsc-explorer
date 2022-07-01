@@ -92,11 +92,17 @@ input {
 }
 
 .card {
+    word-wrap: break-word;
     padding: 30px;
     margin-bottom: 30px;
     background-color: var(--main-bg);
     box-shadow: var(--box-shadow);
     border-radius: var(--border-radius);
+}
+
+.card__border {
+    border: 2px solid;
+    border-color: var(--second-color);
 }
 
 .full-height {

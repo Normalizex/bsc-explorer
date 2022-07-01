@@ -7,9 +7,17 @@ export const getLatestBlock = async () => web3.eth.getBlock('latest', true);
 
 export const getBlock = async (blockNumber: string | number) => web3.eth.getBlock(blockNumber, true);
 
+export const getTransaction = async (hash: string) => isTransactionHash(hash) ? web3.eth.getTransaction(hash) : null;
+
+export const getTransactionReceipt = async (hash: string) => isTransactionHash(hash) ? web3.eth.getTransactionReceipt(hash) : null;
+
 //Web3.js use "declare types".
 //This is my decision on how to get the type.
 export type BlockTransactionsObject = Awaited<ReturnType<typeof getLatestBlock>>;
+
+export type Transaction = Awaited<ReturnType<typeof getTransaction>>;
+
+export type TransactionReceipt = Awaited<ReturnType<typeof getTransactionReceipt>>;
 
 export const calculateGas = (block: BlockTransactionsObject) => {
     const minGasPrice = 5;//can't be less than 5.

@@ -16,7 +16,7 @@ const Header: React.FC = () => {
                 <Link to={'/'}>
                     <div className="header__logo">
                         <img src={logo} alt="company logo" />
-                        <h1>BSC-Explorer</h1>
+                        <h1 className="header__logo-text">BSC-Explorer</h1>
                     </div>
                 </Link>
             </div>

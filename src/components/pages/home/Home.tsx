@@ -247,7 +247,7 @@ const Home: React.FC = () => {
                                             <tr key={tx.hash}>
                                                 <td><Link to={`/tx/${tx.hash}`}>{tx.hash.slice(0, 10) + "..."}</Link></td>
                                                 <td><Link to={`/address/${tx.from}`}>{tx.from.slice(0, 20) + "..."}</Link></td>
-                                                <td><Link to={`/tx/${tx.to}`}>{tx.to ? tx.to.slice(0, 20) + "..." : "-"}</Link></td>
+                                                <td><Link to={`/address/${tx.to}`}>{tx.to ? tx.to.slice(0, 20) + "..." : "-"}</Link></td>
                                                 <td>{Web3.utils.fromWei(tx.value, 'ether')}</td>
                                             </tr>
                                         )
