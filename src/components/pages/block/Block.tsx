@@ -1,69 +1,56 @@
 import Web3 from 'web3';
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Loading, Notify } from 'notiflix';
+
+import useLoading from '../../../hooks/loading';
 
 import Table from '../../table/Table';
+import NotFound from '../../404/NotFound';
+import Loading from '../../loading/Loading';
 
-import { getLatestBlock, getBlock, BlockTransactionsObject } from '../../../services/web3';
+import { BlockTransactionsObject } from '../../../services/web3';
+import { getBlockByNumber, calculateCooldown } from './block.controller';
+
 
 import './block.scss';
+
 
 const Block: React.FC = () => {
     const {blockNumber=""} = useParams();
 
-    const isBlock = (!blockNumber.startsWith('0x') && Number(blockNumber) && Number(blockNumber) > 0)
+    const isBlock = (
+        !blockNumber.startsWith('0x') &&
+        !!Number(blockNumber) &&
+        Number(blockNumber) > 0
+    );
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useLoading(false);
     const [block, setBlock] = useState<BlockTransactionsObject | null>(null);
     const [cooldouwn, setCooldown] = useState<Date | null>(null);
 
     useEffect(() => {
         const fetchBlock = async () => {
             setLoading(true);
-
-            await getLatestBlock().then(async (latest) => {
-                if (latest.number === Number(blockNumber)) return setBlock(latest);
-
-                if (Number(blockNumber) > latest.number) {
-                    const cooldouwnTime = (Number(blockNumber) - latest.number) * 3;
-                    return setCooldown(new Date(new Date().getTime() + cooldouwnTime * 1000));
-                }else {
-                    setCooldown(null);
-                }
-
-                const fetchedBlock = await getBlock(blockNumber).catch(_ => {
-                    Notify.failure('Block not fetched');
-                    return null;
-                });
-
-                setBlock(fetchedBlock);
-            }).catch(_ => {});
+            await getBlockByNumber(blockNumber).then((blocks) => {
+                if (blocks.block?.number === blocks.latest.number) return setBlock(blocks.latest);
+                
+                const cooldouwn = calculateCooldown(blocks.latest.number, Number(blockNumber));
+                setCooldown(cooldouwn ? new Date(new Date().getTime() + cooldouwn * 1000) : null);
+                setBlock(blocks.block);
+            });
 
             setLoading(false);
         };
         fetchBlock();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [blockNumber]);
 
-    useEffect(() => {
-        if (loading) return Loading.circle('Loading...');
+    if (loading) return <Loading />
 
-        Loading.remove();
-    }, [loading]);
-
-    if (loading) {
-        return (
-            <div className='row'>
-                <div className="col-12">
-                    <div className="card">
-                        <div className="card__body">
-                            <h1>Loading...</h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
+    if (
+        !isBlock ||
+        block === null
+    ) return <NotFound message='Block Not Found' />
 
     if (cooldouwn) return (
         <div className='row'>
@@ -71,18 +58,6 @@ const Block: React.FC = () => {
                 <div className="card">
                     <div className="card__body">
                         <h1>The block will be added on {cooldouwn.toLocaleDateString()} {cooldouwn.toLocaleTimeString()}</h1>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-
-    if (!isBlock || block === null) return (
-        <div className='row'>
-            <div className="col-12">
-                <div className="card">
-                    <div className="card__body">
-                        <h1>404 | Block Not Found</h1>
                     </div>
                 </div>
             </div>
@@ -148,7 +123,7 @@ const Block: React.FC = () => {
                 </div>
             </div>
         </div>
-    )
+    );
 };
 
 export default Block;

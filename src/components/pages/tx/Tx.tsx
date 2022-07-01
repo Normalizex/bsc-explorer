@@ -1,17 +1,21 @@
 import Web3 from 'web3';
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Loading } from 'notiflix';
 
-import { getTransaction, getTransactionReceipt, Transaction, TransactionReceipt } from '../../../services/web3';
-import { signatures as findSignature } from '../../../services/samczsun';
+import useLoading from '../../../hooks/loading';
+
+import NotFound from '../../404/NotFound';
+import Loading from '../../loading/Loading';
+
+import { Transaction, TransactionReceipt } from "../../../services/web3";
+import { findSignatures, findFunctionByMethod, getTransactionDetailed } from './tx.controller.';
 
 import './tx.scss';
 
 const Tx: React.FC = () => {
     const {hash=""} = useParams();
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useLoading(false);
     const [inputFunction, setInputFunction] = useState('');
     const [transaction, setTransaction] = useState<{
         data: Transaction,
@@ -26,101 +30,39 @@ const Tx: React.FC = () => {
         const fetchTransaction = async () => {
             setLoading(true);
 
-            await getTransaction(hash).then(async (data) => {
-                const receipt = await getTransactionReceipt(hash);
+            await getTransactionDetailed(hash)
+                .then(tx => {
+                    setTransaction(tx);
 
-                if (!data || !receipt) return;
+                    const methodID = tx?.data?.input?.slice(0, 10);
+                    if (!methodID) return;
 
-                const inputFunction = data.input.slice(0, 10);
-                findSignature({
-                    all: true,
-                    function: inputFunction
-                }).then(signaturesList => {
-                    const findedInputFunction = signaturesList.result.function[inputFunction]
-                    if (!findedInputFunction) return;
-
-                    const finded = findedInputFunction[0]?.name;
-                    setInputFunction(finded);
-                });
-
-                setTransaction({
-                    data,
-                    receipt
-                });
-            });
+                    findFunctionByMethod(methodID).then((methodName) => {
+                        setInputFunction(methodName);
+                    });
+                })
+                .catch(_ => {});
 
             setLoading(false);
         };
         fetchTransaction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hash]);
 
     useEffect(() => {
-        const fetchSignatures = async () => {
-            if (!transaction?.receipt) return;
-
-            let fetchedSignatured:Array<{
-                event: string,
-                name: string
-            }> = [];
-            for (const log of transaction.receipt.logs){
-                const event = log.topics[0];
-                const exists = fetchedSignatured.find(sig => sig.event === event);
-
-                if (exists) continue;
-
-                await findSignature({ all: true, event }).then(signature => {
-                    const findedEvent = signature.result.event[event];
-                    if (!findedEvent) return;
-
-                    const findedName = findedEvent[0].name;
-                    fetchedSignatured.push({ 
-                        event,
-                        name: findedName
-                    });
-                })
-            }
-            setSignatures(fetchedSignatured);
-        };
-
-        fetchSignatures();
+        if (!transaction?.receipt) return;
+        findSignatures(transaction.receipt).then(findedSignatures => {
+            setSignatures(findedSignatures);
+        });
     }, [transaction?.receipt])
 
-    useEffect(() => {
-        if (loading) return Loading.circle('Loading...');
-
-        Loading.remove();
-    }, [loading]);
-
-    useEffect(() => {
-        console.log(transaction);
-    }, [transaction])
-
-
-    if (loading) {
-        return (
-            <div className='row'>
-                <div className="col-12">
-                    <div className="card">
-                        <div className="card__body">
-                            <h1>Loading...</h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    if (!hash || !transaction?.data || !transaction.receipt) return (
-        <div className='row'>
-            <div className="col-12">
-                <div className="card">
-                    <div className="card__body">
-                        <h1>404 | Transaction Not Found</h1>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
+    if (loading) return <Loading />
+    if (
+        !hash ||
+        !transaction?.data ||
+        !transaction.receipt
+    ) return <NotFound message='Transaction Not Found' />
+    
     return (
         <div className="row">
             <div className="col-12">
@@ -149,45 +91,49 @@ const Tx: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div className="col-12">
-                <div className="card">
-                    <div className="card__header">
-                        <h3>Logs: {transaction.receipt.logs.length}</h3>
-                    </div>
-                    <div className="card__body">
-                        {transaction.receipt.logs.map((log, index) => {
-                            const signature = signatures.find(sig => sig.event === log.topics[0]);
-                            return (
-                                <div 
-                                    className="card card__border"
-                                    key={index}
-                                >
-                                    <div className="card__body">
-                                        <div className='tx-info'>
-                                            <p>Address: <Link to={`/address/${log.address}`}>{log.address}</Link></p>
-                                            <p>Log Index: {log.logIndex}</p>
-                                            <p>Topics: {signature?.name}</p>
-                                            {log.topics.map((topic, topicIndex) => {
-                                                return (
-                                                    <div className="tx-info-card" key={topicIndex}>
-                                                        [{topicIndex}] {topic}
+            { (transaction.receipt.logs.length || null) &&
+                <div className="col-12">
+                    <div className="card">
+                        <div className="card__header">
+                            <h3>Logs: {transaction.receipt.logs.length}</h3>
+                        </div>
+                        <div className="card__body">
+                            <div className="row">
+                                {transaction.receipt.logs.map((log, index) => {
+                                    const signature = signatures.find(sig => sig.event === log.topics[0]);
+                                    return (
+                                        <div 
+                                            className="card col-12"
+                                            key={index}
+                                        >
+                                            <div className="card__body">
+                                                <div className='tx-info'>
+                                                    <p>Address: <Link to={`/address/${log.address}`}>{log.address}</Link></p>
+                                                    <p>Log Index: {log.logIndex}</p>
+                                                    <p>Topics: {signature?.name}</p>
+                                                    {log.topics.map((topic, topicIndex) => {
+                                                        return (
+                                                            <div className="tx-info-card" key={topicIndex}>
+                                                                [{topicIndex}] {topic}
+                                                            </div>
+                                                        )
+                                                    })}
+                                                    <p>Data: </p>
+                                                    <div className="tx-info-card">
+                                                        {log.data}
                                                     </div>
-                                                )
-                                            })}
-                                            <p>Data: </p>
-                                            <div className="tx-info-card">
-                                                {log.data}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            )
-                        })}
+                                    )
+                                })}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
-    )
+    );
 };
 
 export default Tx;

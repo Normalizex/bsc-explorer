@@ -1,4 +1,6 @@
+import Web3 from "web3";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import StatusCard from "../../status-card/StatusCard";
 import Chart, { ChartSeries } from "../../Chart/Chart";
@@ -8,8 +10,6 @@ import { getPrice } from "../../../services/binance";
 import { getLatestBlock, calculateGas, timestampToMinutes } from "../../../services/web3";
 
 import './home.scss';
-import { Link } from "react-router-dom";
-import Web3 from "web3";
 
 const Home: React.FC = () => {
     const [cardInfo, setCardInfo] = useState({
@@ -37,19 +37,19 @@ const Home: React.FC = () => {
         timeAt: string,
         bnbPrice: string
     }>>([]);
+
     const [latestTransactions, setLatestTransactions] = useState<Array<{
         hash: string,
         from: string,
         to: string | null,
         value: string
-    }>>([])
+    }>>([]);
 
     useEffect(() => {
         const updateInfo = async () => {
             const bnbPrice = await getPrice('BNB', 'USDT').then((quote) => 
                 Number(quote.price).toFixed(2) + '$'
             );
-
             const block = await getLatestBlock();
             const gas = calculateGas(block);
             const timeAt = timestampToMinutes(block);
@@ -72,9 +72,9 @@ const Home: React.FC = () => {
                             { ...avg, data: update(avg.data, gas.avg) }
                         ],
                         timeAt: [...prevGasPriceChart.timeAt.slice(-9), timeAt]
-                    }
-                })
-            }
+                    };
+                });
+            };
 
             const updateStatusCard = () => {
                 setCardInfo({
@@ -98,7 +98,7 @@ const Home: React.FC = () => {
                             bnbPrice: bnbPrice
                         },
                         ...prevBlocks
-                    ]
+                    ];
                 });
 
                 setLatestTransactions(prevTransactions => {
@@ -116,9 +116,9 @@ const Home: React.FC = () => {
                     return [
                         ...newTransactions,
                         ...prevTransactions
-                    ] 
+                    ];
                 });
-            }
+            };
 
             updateStatusCard();
             updateChart();
@@ -263,7 +263,7 @@ const Home: React.FC = () => {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default Home;
