@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
@@ -26,7 +27,7 @@ const Block: React.FC = () => {
 
     const [loading, setLoading] = useLoading(false);
     const [block, setBlock] = useState<BlockTransactionsObject | null>(null);
-    const [cooldouwn, setCooldown] = useState<Date | null>(null);
+    const [cooldouwn, setCooldown] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchBlock = async () => {
@@ -35,7 +36,7 @@ const Block: React.FC = () => {
                 if (blocks.block?.number === blocks.latest.number) return setBlock(blocks.latest);
                 
                 const cooldouwn = calculateCooldown(blocks.latest.number, Number(blockNumber));
-                setCooldown(cooldouwn ? new Date(new Date().getTime() + cooldouwn * 1000) : null);
+                setCooldown(cooldouwn ? new Date().getTime() + (cooldouwn * 1000) : null);
                 setBlock(blocks.block);
             });
 
@@ -47,22 +48,22 @@ const Block: React.FC = () => {
 
     if (loading) return <Loading />
 
-    if (
-        !isBlock ||
-        block === null
-    ) return <NotFound message='Block Not Found' />
-
     if (cooldouwn) return (
         <div className='row'>
             <div className="col-12">
                 <div className="card">
                     <div className="card__body">
-                        <h1>The block will be added on {cooldouwn.toLocaleDateString()} {cooldouwn.toLocaleTimeString()}</h1>
+                        <h1>The block will be added on {moment(cooldouwn).format('llll')}</h1>
                     </div>
                 </div>
             </div>
         </div>
     );
+
+    if (
+        !isBlock ||
+        block === null
+    ) return <NotFound message='Block Not Found' />
 
     return (
         <div className='row'>
@@ -75,7 +76,7 @@ const Block: React.FC = () => {
                         <div className='block-info'>
                             <p><span className='theme-color'>Number: </span>{block.number}</p>
                             <p><span className='theme-color'>Tx Count: </span>{block.transactions.length}</p>
-                            <p><span className='theme-color'>Timestam: </span>{block.timestamp}</p>
+                            <p><span className='theme-color'>Timestamp: </span>{moment(Number(block.timestamp) * 1000).fromNow(true)} ago</p>
                             <p><span className='theme-color'>Miner: </span><Link to={`/address/${block.miner}`}>{block.miner}</Link></p>
                             <p><span className='theme-color'>Difficulty: </span>{block.difficulty}</p>
                             <p><span className='theme-color'>Total Difficulty: </span>{block.totalDifficulty}</p>

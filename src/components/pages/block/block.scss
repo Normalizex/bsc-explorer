@@ -3,10 +3,10 @@
     font-weight: 800;
     font-size: 20px;
     a:hover{
-        color: var(--main-color);
+        color: var(--second-color);
     }
-    a{
-        color: var(--second-color)
+    a {
+        color: var(--main-color);
     }
 }
 
@@ -15,10 +15,10 @@
         color: #fff;
     }
     a{
-        color: var(--second-color)
+        color: var(--second-color);
     }
 }
 
 .theme-color {
-    color: var(--main-color)
+    color: var(--second-color);
 }

@@ -4,10 +4,10 @@
     font-size: 18px;
     word-wrap: break-word;
     a:hover{
-        color: var(--main-color);
+        color: var(--second-color);
     }
-    a{
-        color: var(--second-color)
+    a {
+        color: var(--main-color);
     }
 }
 
@@ -27,4 +27,8 @@
     .topic-card, .tx-info {
         font-size: 12px;
     }
+}
+
+.theme-color {
+    color: var(--second-color);
 }
