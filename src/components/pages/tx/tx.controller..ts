@@ -21,7 +21,8 @@ export const findSignatures = async (transaction: TransactionReceipt): Promise<A
             const findedEvent = signature.result.event[event];
             if (!findedEvent) return;
 
-            const findedName = findedEvent[0].name;
+            const filtered = findedEvent.find(event => !event.filtered);
+            const findedName = filtered ? filtered.name : findedEvent[0].name;
             fetchedSignatured.push({ 
                 event,
                 name: findedName
@@ -41,7 +42,8 @@ export const findFunctionByMethod = async (method: string): Promise<string> => {
     const findedInputFunction = signaturesList.result.function[method];
     if (!findedInputFunction) return "";
 
-    const finded = findedInputFunction[0]?.name;
+    const filtered = findedInputFunction.find(sig => !sig.filtered);
+    const finded = filtered ? filtered.name : findedInputFunction[0]?.name;
     return finded;
 };
 

@@ -11,6 +11,11 @@ export const getTransaction = async (hash: string) => isTransactionHash(hash) ? 
 
 export const getTransactionReceipt = async (hash: string) => isTransactionHash(hash) ? web3.eth.getTransactionReceipt(hash) : null;
 
+export const getCode = async (address: string) => web3.eth.getCode(address);
+
+export const getBalance = async (address: string) => web3.eth.getBalance(address);
+
+export const getTransactionsCount = async (address: string) => web3.eth.getTransactionCount(address);
 //Web3.js use "declare types".
 //This is my decision on how to get the type.
 export type BlockTransactionsObject = Awaited<ReturnType<typeof getLatestBlock>>;

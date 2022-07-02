@@ -256,7 +256,7 @@ const Home: React.FC = () => {
                                     }
                                 })}
                                 limit={10}
-                                pagesLimit={10}
+                                pagesLimit={1000}
                             />
                         </div>
                     </div>

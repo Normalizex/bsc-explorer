@@ -74,7 +74,7 @@ const Tx: React.FC = () => {
                         <div className='tx-info'>
                             <p><span className='theme-color'>Hash: </span>{transaction.data.hash}</p>
                             <p><span className='theme-color'>Status: </span>{transaction.receipt.status.toString()}</p>
-                            <p><span className='theme-color'>Block: </span>{transaction.data.blockNumber}</p>
+                            <p><span className='theme-color'>Block: </span><Link to={`/block/${transaction.data.blockNumber}`}>{transaction.data.blockNumber}</Link></p>
                             <p><span className='theme-color'>From: </span><Link to={`/address/${transaction.data.from}`}>{transaction.data.from}</Link></p>
                             <p><span className='theme-color'>To: </span><Link to={`/address/${transaction.data.to}`}>{transaction.data.to}</Link></p>
                             <p><span className='theme-color'>Value: </span>{Web3.utils.fromWei(transaction.data.value, 'ether')} BNB</p>

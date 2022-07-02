@@ -14,7 +14,6 @@
     "@types/react-dom": "18.0.5",
     "apexcharts": "^3.35.3",
     "axios": "0.27.2",
-    "bsc-scan": "^1.2.0",
     "moment": "^2.29.3",
     "notiflix": "^3.2.5",
     "react": "18.2.0",

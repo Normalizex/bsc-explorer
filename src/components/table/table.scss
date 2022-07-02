@@ -28,7 +28,7 @@
 
 .table__pagination {
     display: flex;
-    width: 100%;
+    flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     margin-top: 20px;

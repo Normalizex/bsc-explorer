@@ -105,8 +105,8 @@ const Block: React.FC = () => {
                                     </tr>
                                 )
                             }}
-                            tbody={() => {
-                                return (<>{block.transactions.map((tx) => {
+                            tbody={block.transactions.map(tx => {
+                                return () => {
                                     return (
                                         <tr key={tx.hash}>
                                             <td><Link to={`/tx/${tx.hash}`}>{tx.hash.slice(0, 10) + "..."}</Link></td>
@@ -115,10 +115,9 @@ const Block: React.FC = () => {
                                             <td>{Web3.utils.fromWei(tx.value, 'ether')}</td>
                                         </tr>
                                     )
-                                })}</>)
-                            }}
+                                }
+                            })}
                             limit={50}
-                            pagesLimit={10}
                         />
                     </div>
                 </div>

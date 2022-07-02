@@ -22,7 +22,6 @@ const Table: React.FC<TableProps> = ({
 
     const pageCount = Math.floor(Tbodys.length / limit);
     const pages = Tbodys.length % limit === 0 ? pageCount : pageCount + 1;
-    const range: number[] = [...Array(pages).keys()];
 
     const selectPage = (page: number) => {
         const start = limit * page;
@@ -45,6 +44,29 @@ const Table: React.FC<TableProps> = ({
     return (
         <div>
             <div className="table-wrapper">
+                { pages > 1 &&
+                    <div className="table__pagination">
+                        <h3>Page {currentPage + 1} of {pagesLimit ? (pageCount + 1 > pagesLimit ? pagesLimit : pageCount + 1 ) : pageCount}</h3>
+                        <div className="row">
+                            { currentPage + 1 > 1 && (
+                                <div className="col-6" onClick={() => {
+                                    selectPage(currentPage - 1);
+                                }}>
+                                    <button className="btn">Back</button>
+                                </div>
+                            )}
+                            { (currentPage + 1) < (pagesLimit ? (pagesLimit > pageCount + 1 ? pagesLimit : pageCount) :  pageCount) &&
+                                <div className="col-6" onClick={() => {
+                                    const updatedPage = currentPage + 1;
+                                    if (updatedPage > pagesLimit || updatedPage > pageCount) return;
+                                    selectPage(currentPage + 1);
+                                }}>
+                                    <button className="btn">Next</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
                 <table>
                     {Thead && 
                         <thead>
@@ -58,17 +80,6 @@ const Table: React.FC<TableProps> = ({
                     </tbody>
                 </table>
             </div>
-            { pages > 1 &&
-                <div className="table__pagination">
-                    {
-                        range.map((page) => ( (isNaN(pagesLimit) || (page < pagesLimit)) &&
-                            <div key={page} className={`table__pagination-item ${currentPage === page ? 'active' : ''}`} onClick={() => selectPage(page)}>
-                                {page + 1}
-                            </div>
-                        ))
-                    }
-                </div>
-            }
         </div>
   );
 };
