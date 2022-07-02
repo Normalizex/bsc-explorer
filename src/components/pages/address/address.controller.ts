@@ -10,7 +10,7 @@ export const getNormalTransactions = async (page: number, address: string) => {
         address: address,
         startblock: 0,
         endblock: latestBlock.number,
-        offset: 10_000,
+        offset: 1000,
         sort: "desc",
         page
     }).then(quote => {

@@ -106,55 +106,53 @@ const Address: React.FC = () => {
                 </div>
                 <div className="col-12">
                     <div className="card">
-                        <div className="address-info__card">
-                            <h3>Page: {currentPage}</h3>
-                            { currentPage > 1 && (
-                                <button
-                                    className="btn"
-                                    onClick={() => setCurrentPage(prevPage => prevPage - 1)}
-                                >
-                                    {"<"}
-                                </button>
-                            )}
+                        <h3>Page: {currentPage}</h3>
+                        { currentPage > 1 && (
                             <button
                                 className="btn"
-                                onClick={() => setCurrentPage(prevPage => prevPage + 1)}
+                                onClick={() => setCurrentPage(prevPage => prevPage - 1)}
                             >
-                                {">"}
+                                {"<"}
                             </button>
-                            {['', '#txs', '#transactions'].includes(location.hash) && transactions.normal.find(list => list.page === currentPage) && (
-                                <div>
-                                    <h3>Transactions: {transactions.normal.find(list => list.page === currentPage)?.txs.length || 0}</h3>
-                                    <Table
-                                        thead={() => {
+                        )}
+                        <button
+                            className="btn"
+                            onClick={() => setCurrentPage(prevPage => prevPage + 1)}
+                        >
+                            {">"}
+                        </button>
+                        {['', '#txs', '#transactions'].includes(location.hash) && transactions.normal.find(list => list.page === currentPage) && (
+                            <div>
+                                <h3>Transactions: {transactions.normal.find(list => list.page === currentPage)?.txs.length || 0}</h3>
+                                <Table
+                                    thead={() => {
+                                        return (
+                                            <tr>
+                                                <th>Hash</th>
+                                                <th>Age</th>
+                                                <th>From</th>
+                                                <th>To</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        )
+                                    }}
+                                    tbody={transactions.normal[currentPage - 1].txs.map((tx) => {
+                                        return () => {
                                             return (
-                                                <tr>
-                                                    <th>Hash</th>
-                                                    <th>Age</th>
-                                                    <th>From</th>
-                                                    <th>To</th>
-                                                    <th>Value</th>
+                                                <tr key={tx.hash}>
+                                                    <td><Link target='_blank'to={`/tx/${tx.hash}`}>{tx.hash.slice(0, 10) + "..."}</Link></td>
+                                                    <td>{tx.age} ago</td>
+                                                    <td><Link target='_blank' to={`/address/${tx.from}`}>{tx.from.slice(0, 20) + "..."}</Link></td>
+                                                    <td><Link target='_blank' to={`/address/${tx.to}`}>{tx.to ? tx.to.slice(0, 20) + "..." : "-"}</Link></td>
+                                                    <td>{Web3.utils.fromWei(tx.value.toString(), 'ether')}</td>
                                                 </tr>
                                             )
-                                        }}
-                                        tbody={transactions.normal[currentPage - 1].txs.map((tx) => {
-                                            return () => {
-                                                return (
-                                                    <tr key={tx.hash}>
-                                                        <td><Link target='_blank'to={`/tx/${tx.hash}`}>{tx.hash.slice(0, 10) + "..."}</Link></td>
-                                                        <td>{tx.age} ago</td>
-                                                        <td><Link target='_blank' to={`/address/${tx.from}`}>{tx.from.slice(0, 20) + "..."}</Link></td>
-                                                        <td><Link target='_blank' to={`/address/${tx.to}`}>{tx.to ? tx.to.slice(0, 20) + "..." : "-"}</Link></td>
-                                                        <td>{Web3.utils.fromWei(tx.value.toString(), 'ether')}</td>
-                                                    </tr>
-                                                )
-                                            }
-                                        })}
-                                        limit={20}
-                                    />
-                                </div>
-                            )}
-                        </div>
+                                        }
+                                    })}
+                                    limit={20}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
                 { info.contract && info.contract !== '0x' &&
