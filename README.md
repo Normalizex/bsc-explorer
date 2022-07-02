@@ -1,46 +1,31 @@
-# Getting Started with Create React App
+# Bsc-Explorer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.
+- Detailed Blockchain Data for Binance Smart Chain (BSC) including the most recently mined blocks, transactions, and addresses.
 
-## Available Scripts
+# Page Site: [HERE](https://normalizex.github.io/bsc-explorer/build/)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+# Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Frontend:
+  - Languages: <img src='https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white' style='vertical-align:middle' /><img src="https://img.shields.io/badge/Sass-CC6699?style=for-the-badge&logo=sass&logoColor=white" style='vertical-align:middle' />
+  - Libraries: <img src='https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB' style='vertical-align:middle' /><img src='https://img.shields.io/badge/web3.js-F16822?style=for-the-badge&logo=web3.js&logoColor=white' style='vertical-align:middle' /><img src="https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white" style='vertical-align:middle' />
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+# About Project:
+> Why is there no backend and such a simple stack?
+The answer is quite simple, through this site you connect to an **existing binance node**.
+And all information is directly requested directly from the **node**.
+Not every average user can run a server with their **1-2TB+** full node for full block processing.
 
-### `npm test`
+# Pros and cons:
+\+ **The advantage is that you directly request data from the node.**
+> Which, in turn, is faster than the same bscscan, which stores full information about blocks in its databases and gives the user information from the database.
+What does it mean? That the delay with the last block from the blockchain is approximately **~5 blocks.**
+**And this is a lot!**
+* *Only `tx` and `block` pages used web3 connection, `address` page used `bscscan api`.*
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+\- **It is not possible to directly request a "transaction list of an address" through the blockchain.**
+> Blockchain only stores a chain of blocks, where some address moves coins or makes other interactions.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+> To achieve the **"list of transactions of the address"** you need to save all transactions of the address in the database, as the same **bscscan** does, on this site it is used only for this purpose.
